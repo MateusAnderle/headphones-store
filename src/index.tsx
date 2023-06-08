@@ -12,6 +12,7 @@ import { Horse, Heart, Cube } from 'phosphor-react-native';
 import { useFonts, Inter_400Regular, Inter_700Bold } from '@expo-google-fonts/inter';
 
 import { StyleSheet, Text, View, StatusBar } from 'react-native';
+import { Routes } from './routes';
 
 const client = new ApolloClient({
   uri: 'http://localhost:1337/graphql',
@@ -50,32 +51,8 @@ export default function App() {
 
   return (
     <NativeBaseProvider>
-      <NavigationContainer>
-        <View style={styles.container}>
-          <Box>
-            <Text>Headphones store!</Text>
-            <Text style={{ fontFamily: 'Inter_400Regular', fontSize: 40 }}>Inter Black</Text>
-
-            <Text>{date}</Text>
-
-            <View>
-              <Horse />
-              <Heart color="#AE2983" weight="fill" size={32} />
-              <Cube color="teal" weight="duotone" />
-            </View>
-          </Box>
-          <StatusBar barStyle="dark-content" />
-        </View>
-      </NavigationContainer>
+      <StatusBar barStyle="dark-content" />
+      <Routes />
     </NativeBaseProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
