@@ -1,4 +1,4 @@
-package com.headphonesstore;
+package com.mateusanderle.headphonesstore;
 
 import android.app.Application;
 import android.content.res.Configuration;

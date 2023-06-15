@@ -1,4 +1,4 @@
-package com.headphonesstore;
+package com.mateusanderle.headphonesstore;
 
 import android.os.Build;
 import android.os.Bundle;

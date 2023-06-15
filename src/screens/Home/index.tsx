@@ -1,12 +1,70 @@
 import { useNavigation } from '@react-navigation/native';
-import { Button, Center } from 'native-base';
+import { Box, Center, Spinner, Text, useToast } from 'native-base';
+
+import { useQuery } from '@apollo/client';
+import { GET_ALL_PRODUCTS } from '../../config/apollo/queries/allProducts';
+
+import { Header } from '../../components/Header';
+import { Card } from '../../components/Card';
+import { FlatList } from 'react-native';
+import { useEffect } from 'react';
 
 export function Home() {
+  const { data, loading, error } = useQuery(GET_ALL_PRODUCTS);
   const { navigate } = useNavigation();
-  return (
-    <Center flex="1" bgColor={'#fff'}>
-      Home
-      <Button onPress={() => navigate('ProductDetail')}>Ir para detalhe</Button>
+  const toast = useToast();
+
+  const EmptyList = () => (
+    <Center flex={1}>
+      <Text fontWeight="semibold">No products found</Text>
     </Center>
+  );
+
+  useEffect(() => {
+    if (error) {
+      toast.show({
+        render: () => {
+          return (
+            <Box bg="red.500" px="2" py="1" rounded="sm" mb={5}>
+              <Text color="muted.50" fontWeight="semibold">
+                Error: Failed to fetch data
+              </Text>
+            </Box>
+          );
+        },
+        placement: 'top',
+      });
+    }
+  }, [error]);
+
+  return (
+    <Box flex="1" bgColor="muted.100" safeArea p={3}>
+      <Header />
+      {loading ? (
+        <Center flex="1">
+          <Spinner
+            color="muted.700"
+            size="lg"
+            accessibilityLabel="Loading content"
+          />
+        </Center>
+      ) : (
+        <FlatList
+          data={data?.products?.data}
+          renderItem={({ item }) => <Card data={item} />}
+          keyExtractor={(item) => item.id}
+          numColumns={2}
+          columnWrapperStyle={{
+            justifyContent: 'space-between',
+            columnGap: 10,
+          }}
+          contentContainerStyle={{ gap: 10 }}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={EmptyList}
+        />
+      )}
+
+      {/* <Button onPress={() => navigate('ProductDetail')}>Ir para detalhe</Button> */}
+    </Box>
   );
 }
