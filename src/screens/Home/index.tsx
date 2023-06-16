@@ -14,6 +14,10 @@ export function Home() {
   const { navigate } = useNavigation();
   const toast = useToast();
 
+  function handleProductPress(id) {
+    navigate('ProductDetail', { id });
+  }
+
   const EmptyList = () => (
     <Center flex={1}>
       <Text fontWeight="semibold">No products found</Text>
@@ -38,7 +42,7 @@ export function Home() {
   }, [error]);
 
   return (
-    <Box flex="1" bgColor="muted.100" safeArea p={3}>
+    <Box flex="1" bgColor="muted.100" safeArea p={'10px'}>
       <Header />
       {loading ? (
         <Center flex="1">
@@ -51,20 +55,17 @@ export function Home() {
       ) : (
         <FlatList
           data={data?.products?.data}
-          renderItem={({ item }) => <Card data={item} />}
+          renderItem={({ item }) => (
+            <Card data={item} onPress={() => handleProductPress(item.id)} />
+          )}
           keyExtractor={(item) => item.id}
           numColumns={2}
-          columnWrapperStyle={{
-            justifyContent: 'space-between',
-            columnGap: 10,
-          }}
+          columnWrapperStyle={{ gap: 10 }}
           contentContainerStyle={{ gap: 10 }}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={EmptyList}
         />
       )}
-
-      {/* <Button onPress={() => navigate('ProductDetail')}>Ir para detalhe</Button> */}
     </Box>
   );
 }

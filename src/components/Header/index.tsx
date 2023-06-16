@@ -3,7 +3,7 @@ import { UserCircle, SlidersHorizontal } from 'phosphor-react-native';
 
 export function Header() {
   return (
-    <Box flexDir="row" justifyContent="space-between">
+    <Box flexDir="row" justifyContent="space-between" mb={2}>
       <Input
         flex={1}
         mr={3}
@@ -11,6 +11,7 @@ export function Header() {
         borderWidth={0}
         fontSize={14}
         alignItems="center"
+        variant="unstyled"
       />
       <SlidersHorizontal size={30} style={{ marginRight: 16 }} />
       <UserCircle size={30} />
