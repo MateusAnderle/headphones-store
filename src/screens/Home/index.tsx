@@ -7,10 +7,13 @@ import { GET_ALL_PRODUCTS } from '../../config/apollo/queries/allProducts';
 import { Header } from '../../components/Header';
 import { Card } from '../../components/Card';
 import { FlatList } from 'react-native';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export function Home() {
-  const { data, loading, error } = useQuery(GET_ALL_PRODUCTS);
+  const [querySearch, setQuerySearch] = useState();
+  const { data, loading, error } = useQuery(GET_ALL_PRODUCTS, {
+    variables: { filter: { contains: querySearch } },
+  });
   const { navigate } = useNavigation();
   const toast = useToast();
 
@@ -43,7 +46,7 @@ export function Home() {
 
   return (
     <Box flex="1" bgColor="muted.100" safeArea p={'10px'}>
-      <Header />
+      <Header querySearch={querySearch} setQuerySearch={setQuerySearch} />
       {loading ? (
         <Center flex="1">
           <Spinner

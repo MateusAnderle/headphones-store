@@ -1,3 +1,4 @@
+import { TouchableOpacity, FlatList, Image } from 'react-native';
 import {
   Box,
   Text,
@@ -5,7 +6,6 @@ import {
   Center,
   Spinner,
   ScrollView,
-  Image,
   useToast,
 } from 'native-base';
 import { CaretLeft } from 'phosphor-react-native';
@@ -14,9 +14,9 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 
 import { PRODUCT_DETAIL } from '../../config/apollo/queries/productDetail';
 import { useQuery } from '@apollo/client';
-import { TouchableOpacity } from 'react-native';
 import { useEffect } from 'react';
 import { baseUrl } from '../../utils/baseUrl';
+import { useWindowDimensions } from 'react-native';
 
 export function ProductDetail() {
   const toast = useToast();
@@ -26,7 +26,11 @@ export function ProductDetail() {
     variables: { id: params?.id },
   });
   const productData = data?.product?.data?.attributes;
-  const url = `${baseUrl}${productData?.images?.data[0].attributes?.url}`;
+  const { width } = useWindowDimensions();
+
+  const imagesArray = productData?.images?.data?.map(
+    (item) => `${baseUrl}${item.attributes?.url}`
+  );
 
   useEffect(() => {
     if (error) {
@@ -76,18 +80,20 @@ export function ProductDetail() {
       </TouchableOpacity>
 
       <ScrollView flex="1" bgColor="muted.100">
-        <Box p={10} bgColor="white">
-          <Image
-            source={{
-              uri: url,
-            }}
-            alt={productData?.title}
-            resizeMode="contain"
-            bgColor="white"
-            style={{ aspectRatio: 1 }}
-          />
-        </Box>
-
+        <FlatList
+          data={imagesArray}
+          renderItem={({ item }) => (
+            <Image
+              source={{ uri: item }}
+              alt={productData?.title}
+              resizeMode="contain"
+              style={{ aspectRatio: 1, backgroundColor: 'white', width }}
+            />
+          )}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          pagingEnabled
+        />
         <Box p={3}>
           <Text fontSize="2xl" fontWeight="semibold">
             {productData?.title}
