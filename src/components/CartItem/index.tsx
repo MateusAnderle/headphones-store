@@ -6,12 +6,20 @@ import {
   increaseQuantity,
   decreaseQuantity,
   deleteProduct,
+  ProductProps,
 } from '../../store/cartSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
-export function CartItem({ data }) {
+interface CartItemProps {
+  data: ProductProps;
+}
+
+export function CartItem({ data }: CartItemProps) {
   const dispatch = useDispatch();
-  const url = `${baseUrl}${data?.attributes?.images.data[0].attributes?.url}`;
+  const path =
+    data?.attributes?.images?.data &&
+    data.attributes.images.data[0]?.attributes?.url;
+  const url = `${baseUrl}${path}`;
 
   function handleRemoveItemFromCart() {
     Alert.alert(
@@ -83,7 +91,7 @@ export function CartItem({ data }) {
           </Box>
 
           <Text fontSize="md" fontWeight="semibold">
-            {data?.attributes?.price}
+            $ {data?.attributes?.price?.toFixed(2)}
           </Text>
         </Box>
       </Box>

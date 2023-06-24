@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Box, Button, HStack, Modal, Text, VStack } from 'native-base';
+import { Box, HStack, Modal, Text, VStack } from 'native-base';
 import { CaretRight } from 'phosphor-react-native';
 import { TouchableOpacity } from 'react-native';
 

@@ -5,14 +5,24 @@ import { useNavigation } from '@react-navigation/native';
 import { CartItem } from '../../components/CartItem';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { clearAddItemError } from '../../store/cartSlice';
+import { ProductProps, clearAddItemError } from '../../store/cartSlice';
+
+type CartDetailProps = {
+  cart: {
+    deliveryFee: number;
+    error: string | undefined;
+    productsList: ProductProps[];
+    success: boolean;
+  };
+};
 
 export function Cart() {
   const dispatch = useDispatch();
-  const { error } = useSelector((state) => state.cart);
+  const { error, productsList } = useSelector(
+    (state: CartDetailProps) => state.cart
+  );
   const { goBack } = useNavigation();
   const toast = useToast();
-  const { productsList } = useSelector((state) => state.cart);
 
   useEffect(() => {
     if (error) {

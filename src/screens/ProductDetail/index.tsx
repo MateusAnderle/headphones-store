@@ -15,7 +15,7 @@ import {
 } from 'native-base';
 import { CaretLeft } from 'phosphor-react-native';
 
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 
 import { PRODUCT_DETAIL } from '../../config/apollo/queries/productDetail';
 import { useQuery } from '@apollo/client';
@@ -27,26 +27,41 @@ import {
   addCartItem,
   clearAddItemSuccess,
   clearAddItemError,
+  ProductProps,
 } from '../../store/cartSlice';
+
+type ProductDetailProps = {
+  cart: {
+    deliveryFee: number;
+    error: string | undefined;
+    productsList: ProductProps[];
+    success: boolean;
+  };
+};
+
+type ImagesProps = {
+  attributes: {
+    url: string;
+  };
+};
 
 export function ProductDetail() {
   const toast = useToast();
   const { goBack } = useNavigation();
-  const { params } = useRoute();
+  const { params } = useRoute<any>();
   const dispatch = useDispatch();
+  const { width } = useWindowDimensions();
 
   const { error: cartError, success: cartSuccess } = useSelector(
-    (state) => state.cart
+    (state: ProductDetailProps) => state.cart
   );
 
   const { data, loading, error } = useQuery(PRODUCT_DETAIL, {
     variables: { id: params?.id },
   });
-  const productData = data?.product?.data?.attributes;
-  const { width } = useWindowDimensions();
 
-  const imagesArray = productData?.images?.data?.map(
-    (item) => `${baseUrl}${item.attributes?.url}`
+  const imagesArray = data?.product?.data?.attributes?.images?.data?.map(
+    (item: ImagesProps) => `${baseUrl}${item.attributes?.url}`
   );
 
   useEffect(() => {
@@ -141,7 +156,7 @@ export function ProductDetail() {
           renderItem={({ item }) => (
             <Image
               source={{ uri: item }}
-              alt={productData?.title}
+              alt={data?.product?.data?.attributes?.title}
               resizeMode="contain"
               style={{ aspectRatio: 1, backgroundColor: 'white', width }}
             />
@@ -152,16 +167,16 @@ export function ProductDetail() {
         />
         <Box p={3}>
           <Text fontSize="2xl" fontWeight="semibold">
-            {productData?.title}
+            {data?.product?.data?.attributes?.title}
           </Text>
 
           <Box flexDirection="row" justifyContent="space-between" mt={5}>
             <Text fontSize="md" fontWeight="semibold">
-              Price: U$ {productData.price}
+              Price: $ {data?.product?.data?.attributes.price.toFixed(2)}
             </Text>
 
             <Text fontSize="md" fontWeight="semibold">
-              Quantity: {productData.quantity}
+              Quantity: {data?.product?.data?.attributes.quantity}
             </Text>
           </Box>
 
@@ -169,7 +184,9 @@ export function ProductDetail() {
             <Text fontSize="md" fontWeight="semibold" mb={1}>
               Description:
             </Text>
-            <Text textAlign="justify">{productData.description}</Text>
+            <Text textAlign="justify">
+              {data?.product?.data?.attributes.description}
+            </Text>
           </Box>
         </Box>
       </ScrollView>

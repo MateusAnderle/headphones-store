@@ -2,7 +2,25 @@ import { Image, Text } from 'native-base';
 import { baseUrl } from '../../utils/baseUrl';
 import { Dimensions, TouchableOpacity } from 'react-native';
 
-export function Card({ data, onPress }: any) {
+type CardProps = {
+  data: {
+    id: string;
+    attributes: {
+      images: {
+        data: {
+          id: string;
+          attributes: {
+            url: string;
+          };
+        }[];
+      };
+      model: string;
+    };
+  };
+  onPress: () => void;
+};
+
+export function Card({ data, onPress }: CardProps) {
   const url = `${baseUrl}${data?.attributes?.images.data[0].attributes?.url}`;
   const { width } = Dimensions.get('screen');
   const cardWidth = width / 2 - 15;

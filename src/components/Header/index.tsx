@@ -10,10 +10,27 @@ import { useNavigation } from '@react-navigation/native';
 import { Box, Input, Text } from 'native-base';
 import { XCircle, ShoppingCart, UserCircle } from 'phosphor-react-native';
 import { useSelector } from 'react-redux';
+import { ProductProps } from '../../store/cartSlice';
 
-export function Header({ querySearch, setQuerySearch }) {
+type HeaderProps = {
+  querySearch: string;
+  setQuerySearch: (value: string) => void;
+};
+
+type CartLengthProps = {
+  cart: {
+    deliveryFee: number;
+    error: string | undefined;
+    productsList: ProductProps[];
+    success: boolean;
+  };
+};
+
+export function Header({ querySearch, setQuerySearch }: HeaderProps) {
   const { navigate } = useNavigation();
-  const cartLength = useSelector((state) => state.cart.productsList.length);
+  const cartLength = useSelector(
+    (state: CartLengthProps) => state.cart.productsList.length
+  );
 
   return (
     <KeyboardAvoidingView
@@ -33,7 +50,7 @@ export function Header({ querySearch, setQuerySearch }) {
             onChangeText={setQuerySearch}
             InputRightElement={
               querySearch ? (
-                <TouchableOpacity onPress={() => setQuerySearch()}>
+                <TouchableOpacity onPress={() => setQuerySearch('')}>
                   <XCircle size={25} color="#ccc" />
                 </TouchableOpacity>
               ) : undefined

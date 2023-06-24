@@ -1,6 +1,43 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialState = {
+interface CartStateProps {
+  productsList: ProductProps[];
+  deliveryFee: number;
+  error: string;
+  success: boolean;
+}
+
+export interface ProductProps {
+  id: string;
+  attributes: {
+    title?: string;
+    description?: string;
+    quantity?: number | undefined;
+    price?: number;
+    images:
+      | {
+          data:
+            | {
+                id: string | undefined;
+                attributes:
+                  | {
+                      url: string | undefined;
+                    }
+                  | undefined;
+              }[]
+            | undefined;
+        }
+      | undefined;
+    brand?: string;
+    model?: string;
+    createdAt?: string;
+    updatedAt?: string;
+  };
+
+  cartQuantity: number;
+}
+
+const initialState: CartStateProps = {
   productsList: [],
   deliveryFee: 30,
   error: '',
@@ -26,7 +63,8 @@ export const cartSlice = createSlice({
     increaseQuantity: (state, action) => {
       const id = action.payload;
       const item = state.productsList.find((product) => product.id === id);
-      if (item && item.cartQuantity < item.attributes.quantity) {
+      const quantity = item?.attributes.quantity || 0;
+      if (item && item.cartQuantity < quantity) {
         item.cartQuantity += 1;
       } else {
         state.error = 'Maximum available quantity of the product';

@@ -10,14 +10,14 @@ import { FlatList } from 'react-native';
 import { useEffect, useState } from 'react';
 
 export function Home() {
-  const [querySearch, setQuerySearch] = useState();
+  const [querySearch, setQuerySearch] = useState<string>('');
   const { data, loading, error } = useQuery(GET_ALL_PRODUCTS, {
     variables: { filter: { contains: querySearch } },
   });
   const { navigate } = useNavigation();
   const toast = useToast();
 
-  function handleProductPress(id) {
+  function handleProductPress(id: string) {
     navigate('ProductDetail', { id });
   }
 
