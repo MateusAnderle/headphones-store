@@ -1,14 +1,40 @@
-import { Box, Divider, Text } from 'native-base';
+import { Box, Divider, Text, useToast } from 'native-base';
 import { TouchableOpacity, FlatList } from 'react-native';
 import { CaretLeft } from 'phosphor-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { CartItem } from '../../components/CartItem';
-import { GET_ALL_PRODUCTS } from '../../config/apollo/queries/allProducts';
-import { useQuery } from '@apollo/client';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { clearAddItemError } from '../../store/cartSlice';
 
 export function Cart() {
+  const dispatch = useDispatch();
+  const { error } = useSelector((state) => state.cart);
   const { goBack } = useNavigation();
-  const { data, loading, error } = useQuery(GET_ALL_PRODUCTS);
+  const toast = useToast();
+  const { productsList } = useSelector((state) => state.cart);
+
+  useEffect(() => {
+    if (error) {
+      toast.show({
+        render: () => {
+          return (
+            <Box bg="red.500" px="2" py="1" rounded="sm" mb={5}>
+              <Text color="muted.50" fontWeight="semibold">
+                {error}
+              </Text>
+            </Box>
+          );
+        },
+        placement: 'top',
+      });
+      const timerError = setTimeout(() => {
+        dispatch(clearAddItemError());
+      }, 500);
+
+      return () => clearTimeout(timerError);
+    }
+  }, [error]);
 
   return (
     <Box flex={1} bgColor="muted.100" safeArea px={3}>
@@ -17,11 +43,24 @@ export function Cart() {
       </TouchableOpacity>
 
       <FlatList
-        data={data?.products?.data}
+        data={productsList}
         renderItem={({ item }) => <CartItem data={item} />}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ gap: 15 }}
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          <Box
+            bgColor="muted.50"
+            borderRadius={5}
+            borderWidth={1}
+            borderColor="muted.300"
+            justifyContent="center"
+            alignItems="center"
+            h="12"
+          >
+            <Text>The cart is empty</Text>
+          </Box>
+        }
       />
 
       <Box pb={3}>

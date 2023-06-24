@@ -1,4 +1,9 @@
-import { TouchableOpacity, FlatList, Image } from 'react-native';
+import {
+  TouchableOpacity,
+  FlatList,
+  Image,
+  useWindowDimensions,
+} from 'react-native';
 import {
   Box,
   Text,
@@ -16,12 +21,24 @@ import { PRODUCT_DETAIL } from '../../config/apollo/queries/productDetail';
 import { useQuery } from '@apollo/client';
 import { useEffect } from 'react';
 import { baseUrl } from '../../utils/baseUrl';
-import { useWindowDimensions } from 'react-native';
+
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  addCartItem,
+  clearAddItemSuccess,
+  clearAddItemError,
+} from '../../store/cartSlice';
 
 export function ProductDetail() {
   const toast = useToast();
   const { goBack } = useNavigation();
   const { params } = useRoute();
+  const dispatch = useDispatch();
+
+  const { error: cartError, success: cartSuccess } = useSelector(
+    (state) => state.cart
+  );
+
   const { data, loading, error } = useQuery(PRODUCT_DETAIL, {
     variables: { id: params?.id },
   });
@@ -47,7 +64,46 @@ export function ProductDetail() {
         placement: 'top',
       });
     }
-  }, [error]);
+    if (cartError) {
+      toast.show({
+        render: () => {
+          return (
+            <Box bg="red.500" px="2" py="1" rounded="sm" mb={5}>
+              <Text color="muted.50" fontWeight="semibold">
+                {cartError}
+              </Text>
+            </Box>
+          );
+        },
+        placement: 'top',
+      });
+      const timerError = setTimeout(() => {
+        dispatch(clearAddItemError());
+      }, 500);
+
+      return () => clearTimeout(timerError);
+    }
+    if (cartSuccess) {
+      toast.show({
+        render: () => {
+          return (
+            <Box bg="green.500" px="2" py="1" rounded="sm" mb={5}>
+              <Text color="muted.50" fontWeight="semibold">
+                Product added to cart
+              </Text>
+            </Box>
+          );
+        },
+        placement: 'top',
+      });
+
+      const timerSuccess = setTimeout(() => {
+        dispatch(clearAddItemSuccess());
+      }, 500);
+
+      return () => clearTimeout(timerSuccess);
+    }
+  }, [error, cartError, cartSuccess]);
 
   if (loading) {
     return (
@@ -118,9 +174,21 @@ export function ProductDetail() {
         </Box>
       </ScrollView>
       <Box bgColor="white" pt={2}>
-        <Button bgColor="black" borderRadius="full" marginX={3}>
-          Buy {productData.price}
-        </Button>
+        <TouchableOpacity
+          style={{
+            backgroundColor: 'black',
+            borderRadius: 100,
+            marginHorizontal: 15,
+            padding: 15,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          onPress={() => dispatch(addCartItem(data?.product?.data))}
+        >
+          <Text fontWeight="semibold" color="white" fontSize="lg">
+            Add to cart
+          </Text>
+        </TouchableOpacity>
       </Box>
     </Box>
   );

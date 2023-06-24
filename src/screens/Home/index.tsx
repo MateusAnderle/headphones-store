@@ -21,12 +21,6 @@ export function Home() {
     navigate('ProductDetail', { id });
   }
 
-  const EmptyList = () => (
-    <Center flex={1}>
-      <Text fontWeight="semibold">No products found</Text>
-    </Center>
-  );
-
   useEffect(() => {
     if (error) {
       toast.show({
@@ -66,7 +60,19 @@ export function Home() {
           columnWrapperStyle={{ gap: 10 }}
           contentContainerStyle={{ gap: 10 }}
           showsVerticalScrollIndicator={false}
-          ListEmptyComponent={EmptyList}
+          ListEmptyComponent={
+            <Box
+              bgColor="muted.50"
+              borderRadius={5}
+              borderWidth={1}
+              borderColor="muted.300"
+              justifyContent="center"
+              alignItems="center"
+              h="12"
+            >
+              <Text>No products found</Text>
+            </Box>
+          }
         />
       )}
     </Box>

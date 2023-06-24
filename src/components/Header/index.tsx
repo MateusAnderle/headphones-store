@@ -7,18 +7,20 @@ import {
 } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
-import { Box, Input } from 'native-base';
+import { Box, Input, Text } from 'native-base';
 import { XCircle, ShoppingCart, UserCircle } from 'phosphor-react-native';
+import { useSelector } from 'react-redux';
 
 export function Header({ querySearch, setQuerySearch }) {
   const { navigate } = useNavigation();
+  const cartLength = useSelector((state) => state.cart.productsList.length);
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <Box flexDir="row" justifyContent="space-between" mb={2}>
+        <Box flexDir="row" justifyContent="space-between" my={2}>
           <Input
             flex={1}
             mr={3}
@@ -37,7 +39,26 @@ export function Header({ querySearch, setQuerySearch }) {
               ) : undefined
             }
           />
-          <TouchableOpacity onPress={() => navigate('Cart')}>
+          <TouchableOpacity
+            style={{ position: 'relative' }}
+            onPress={() => navigate('Cart')}
+          >
+            {cartLength > 0 && (
+              <Box
+                position="absolute"
+                zIndex={10}
+                top={-9}
+                right={2}
+                bgColor="green.500"
+                py={0.2}
+                px={1.5}
+                borderRadius="full"
+              >
+                <Text fontSize="sm" color="white" fontWeight="semibold">
+                  {cartLength}
+                </Text>
+              </Box>
+            )}
             <ShoppingCart size={28} style={{ marginRight: 16 }} />
           </TouchableOpacity>
 

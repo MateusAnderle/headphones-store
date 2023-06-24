@@ -1,5 +1,6 @@
 import React from 'react';
 import { StatusBar } from 'react-native';
+import { Provider } from 'react-redux';
 
 import './libs/dayjs';
 
@@ -15,6 +16,7 @@ import {
 } from '@expo-google-fonts/inter';
 
 import { Routes } from './routes';
+import { store } from './store';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -27,11 +29,13 @@ export default function App() {
   }
 
   return (
-    <NativeBaseProvider>
-      <ApolloProvider client={client}>
-        <StatusBar barStyle="dark-content" />
-        <Routes />
-      </ApolloProvider>
-    </NativeBaseProvider>
+    <Provider store={store}>
+      <NativeBaseProvider>
+        <ApolloProvider client={client}>
+          <StatusBar barStyle="dark-content" />
+          <Routes />
+        </ApolloProvider>
+      </NativeBaseProvider>
+    </Provider>
   );
 }
