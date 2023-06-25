@@ -4,15 +4,7 @@ import {
   Image,
   useWindowDimensions,
 } from 'react-native';
-import {
-  Box,
-  Text,
-  Button,
-  Center,
-  Spinner,
-  ScrollView,
-  useToast,
-} from 'native-base';
+import { Box, Text, Center, Spinner, ScrollView, useToast } from 'native-base';
 import { CaretLeft } from 'phosphor-react-native';
 
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
@@ -29,6 +21,7 @@ import {
   clearAddItemError,
   ProductProps,
 } from '../../store/cartSlice';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 type ProductDetailProps = {
   cart: {
@@ -172,7 +165,8 @@ export function ProductDetail() {
 
           <Box flexDirection="row" justifyContent="space-between" mt={5}>
             <Text fontSize="md" fontWeight="semibold">
-              Price: $ {data?.product?.data?.attributes.price.toFixed(2)}
+              Price:{' '}
+              {formatCurrency(data?.product?.data?.attributes?.price || 0)}
             </Text>
 
             <Text fontSize="md" fontWeight="semibold">

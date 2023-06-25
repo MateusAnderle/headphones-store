@@ -9,6 +9,7 @@ import {
   ProductProps,
 } from '../../store/cartSlice';
 import { useDispatch } from 'react-redux';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 interface CartItemProps {
   data: ProductProps;
@@ -91,7 +92,7 @@ export function CartItem({ data }: CartItemProps) {
           </Box>
 
           <Text fontSize="md" fontWeight="semibold">
-            $ {data?.attributes?.price?.toFixed(2)}
+            {formatCurrency(data?.attributes?.price || 0)}
           </Text>
         </Box>
       </Box>

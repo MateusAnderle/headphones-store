@@ -8,6 +8,7 @@ export declare global {
       Login: undefined;
       UserAccount: undefined;
       Cart: undefined;
+      Checkout: undefined;
     }
   }
 }

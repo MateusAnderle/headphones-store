@@ -1,4 +1,4 @@
-import { Box, Divider, Text, useToast } from 'native-base';
+import { Box, Divider, Text, useTheme, useToast } from 'native-base';
 import { TouchableOpacity, FlatList } from 'react-native';
 import { CaretLeft } from 'phosphor-react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -6,6 +6,7 @@ import { CartItem } from '../../components/CartItem';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { ProductProps, clearAddItemError } from '../../store/cartSlice';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 type CartDetailProps = {
   cart: {
@@ -17,12 +18,20 @@ type CartDetailProps = {
 };
 
 export function Cart() {
+  const toast = useToast();
+  const color = useTheme();
   const dispatch = useDispatch();
-  const { error, productsList } = useSelector(
+  const { goBack, navigate } = useNavigation();
+  const { error, productsList, deliveryFee } = useSelector(
     (state: CartDetailProps) => state.cart
   );
-  const { goBack } = useNavigation();
-  const toast = useToast();
+
+  const subTotal = productsList.reduce((acc, obj) => {
+    if (obj.attributes && typeof obj.attributes.price === 'number') {
+      return acc + obj.attributes.price;
+    }
+    return acc;
+  }, 0);
 
   useEffect(() => {
     if (error) {
@@ -83,7 +92,7 @@ export function Cart() {
             Subtotal:
           </Text>
           <Text fontSize="sm" color="muted.500">
-            U$ 300,00
+            {formatCurrency(subTotal)}
           </Text>
         </Box>
 
@@ -92,7 +101,7 @@ export function Cart() {
             Delivery:
           </Text>
           <Text fontSize="sm" color="muted.500">
-            U$ 10,00
+            {formatCurrency(deliveryFee)}
           </Text>
         </Box>
 
@@ -101,9 +110,25 @@ export function Cart() {
             Total:
           </Text>
           <Text fontWeight="semibold" fontSize="md">
-            U$ 310,00
+            {formatCurrency(subTotal + deliveryFee)}
           </Text>
         </Box>
+        <TouchableOpacity
+          style={{
+            backgroundColor: color.colors.green[500],
+            marginTop: 15,
+            borderRadius: 100,
+            marginHorizontal: 15,
+            padding: 15,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          onPress={() => navigate('Checkout')}
+        >
+          <Text fontWeight="semibold" color="white" fontSize="lg">
+            Go to payment
+          </Text>
+        </TouchableOpacity>
       </Box>
     </Box>
   );
