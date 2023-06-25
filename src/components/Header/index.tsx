@@ -79,7 +79,7 @@ export function Header({ querySearch, setQuerySearch }: HeaderProps) {
             <ShoppingCart size={28} style={{ marginRight: 16 }} />
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => navigate('Login')}>
+          <TouchableOpacity onPress={() => navigate('UserAccount')}>
             <UserCircle size={28} />
           </TouchableOpacity>
         </Box>

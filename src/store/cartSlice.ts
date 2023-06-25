@@ -33,7 +33,6 @@ export interface ProductProps {
     createdAt?: string;
     updatedAt?: string;
   };
-
   cartQuantity: number;
 }
 
@@ -92,6 +91,9 @@ export const cartSlice = createSlice({
     clearAddItemError: (state) => {
       state.error = '';
     },
+    clearCart: (state) => {
+      state.productsList = [];
+    },
   },
 });
 
@@ -102,6 +104,7 @@ export const {
   increaseQuantity,
   decreaseQuantity,
   deleteProduct,
+  clearCart,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

@@ -56,7 +56,7 @@ export function CartItem({ data }: CartItemProps) {
               {data?.attributes?.model}
             </Text>
             <Text fontSize="sm" fontWeight="regular" color="muted.500">
-              Marca
+              {data?.attributes?.brand}
             </Text>
           </Box>
 

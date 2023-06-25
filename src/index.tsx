@@ -16,7 +16,9 @@ import {
 } from '@expo-google-fonts/inter';
 
 import { Routes } from './routes';
-import { store } from './store';
+
+import { store, persistor } from './store';
+import { PersistGate } from 'redux-persist/integration/react';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -30,12 +32,14 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <NativeBaseProvider>
-        <ApolloProvider client={client}>
-          <StatusBar barStyle="dark-content" />
-          <Routes />
-        </ApolloProvider>
-      </NativeBaseProvider>
+      <PersistGate loading={null} persistor={persistor}>
+        <NativeBaseProvider>
+          <ApolloProvider client={client}>
+            <StatusBar barStyle="dark-content" />
+            <Routes />
+          </ApolloProvider>
+        </NativeBaseProvider>
+      </PersistGate>
     </Provider>
   );
 }

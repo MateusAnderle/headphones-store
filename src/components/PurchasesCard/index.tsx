@@ -1,11 +1,28 @@
 import { useState } from 'react';
+import { TouchableOpacity } from 'react-native';
+import dayjs from 'dayjs';
 
 import { Box, HStack, Modal, Text, VStack } from 'native-base';
-import { CaretRight } from 'phosphor-react-native';
-import { TouchableOpacity } from 'react-native';
 
-export function PurchasesCard() {
+import { CaretRight } from 'phosphor-react-native';
+import { formatCurrency } from '../../utils/formatCurrency';
+import { Purchased, PurchasedItem } from '../../store/accountSlice';
+
+interface PurchasesCardProps {
+  data: Purchased;
+}
+
+export function PurchasesCard({ data }: PurchasesCardProps) {
   const [showModal, setShowModal] = useState(false);
+  const purchaseDate = dayjs(data?.date);
+  const purchaseDateFormatted = purchaseDate.format('DD/MM/YYYY - HH:mm');
+
+  const totalAmount = data?.items.reduce((acc, obj) => {
+    if (obj.attributes && typeof obj.attributes.price === 'number') {
+      return acc + obj.attributes.price * obj.cartQuantity;
+    }
+    return acc;
+  }, 0);
 
   function handleOpenModal() {
     setShowModal(true);
@@ -23,16 +40,16 @@ export function PurchasesCard() {
       >
         <Box>
           <Text fontWeight="semibold" fontSize="md">
-            21/06/2023 - 18:35
+            {purchaseDateFormatted}
           </Text>
           <Text fontWeight="regular" fontSize="sm">
-            Items: 12
+            Items: {data?.items?.length}
           </Text>
           <Text fontWeight="regular" fontSize="sm">
-            Delivery: U$ 10,00
+            Delivery: {formatCurrency(data?.deliveryFee)}
           </Text>
           <Text fontWeight="regular" fontSize="sm">
-            Total: U$ 1200,00
+            Total: {formatCurrency(totalAmount)}
           </Text>
         </Box>
 
@@ -42,28 +59,34 @@ export function PurchasesCard() {
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="lg">
         <Modal.Content maxWidth="350">
           <Modal.CloseButton />
-          <Modal.Header>Order - 21/06/2023 - 18:35</Modal.Header>
+          <Modal.Header>Order: {purchaseDateFormatted}</Modal.Header>
           <Modal.Body>
             <VStack space={3}>
-              <HStack alignItems="center" justifyContent="space-between">
-                <Text fontWeight="medium">Headphone sony</Text>
-                <Text color="muted.400">U$ 298.77</Text>
-              </HStack>
-              <HStack alignItems="center" justifyContent="space-between">
-                <Text fontWeight="medium">Headphone Bose</Text>
-                <Text color="muted.400">U$ 298.77</Text>
-              </HStack>
-              <HStack alignItems="center" justifyContent="space-between">
-                <Text fontWeight="medium">Headphone Beats</Text>
-                <Text color="muted.400">U$ 298.77</Text>
-              </HStack>
+              {data?.items.map((item: PurchasedItem) => {
+                return (
+                  <HStack
+                    key={item.attributes.createdAt}
+                    alignItems="center"
+                    justifyContent="space-between"
+                  >
+                    <Text fontWeight="medium">{item.attributes.model}</Text>
+                    <Text color="muted.400">
+                      {item?.attributes?.price &&
+                        formatCurrency(
+                          item.attributes.price * item?.cartQuantity
+                        )}
+                    </Text>
+                  </HStack>
+                );
+              })}
+
               <HStack alignItems="center" justifyContent="space-between">
                 <Text fontWeight="medium">Delivery</Text>
-                <Text color="muted.600">U$ 38.84</Text>
+                <Text color="red.500">{formatCurrency(data?.deliveryFee)}</Text>
               </HStack>
               <HStack alignItems="center" justifyContent="space-between">
                 <Text fontWeight="medium">Total Amount</Text>
-                <Text color="green.500">U$ 337.61</Text>
+                <Text color="green.500">{formatCurrency(totalAmount)}</Text>
               </HStack>
             </VStack>
           </Modal.Body>

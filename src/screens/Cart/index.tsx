@@ -5,8 +5,13 @@ import { useNavigation } from '@react-navigation/native';
 import { CartItem } from '../../components/CartItem';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { ProductProps, clearAddItemError } from '../../store/cartSlice';
+import {
+  ProductProps,
+  clearAddItemError,
+  clearCart,
+} from '../../store/cartSlice';
 import { formatCurrency } from '../../utils/formatCurrency';
+import { addPurchase } from '../../store/accountSlice';
 
 type CartDetailProps = {
   cart: {
@@ -28,10 +33,22 @@ export function Cart() {
 
   const subTotal = productsList.reduce((acc, obj) => {
     if (obj.attributes && typeof obj.attributes.price === 'number') {
-      return acc + obj.attributes.price;
+      return acc + obj.attributes.price * obj.cartQuantity;
     }
     return acc;
   }, 0);
+
+  function handleCheckout() {
+    dispatch(
+      addPurchase({
+        date: new Date(),
+        items: productsList,
+        deliveryFee: deliveryFee,
+      })
+    );
+    dispatch(clearCart());
+    navigate('Checkout');
+  }
 
   useEffect(() => {
     if (error) {
@@ -81,55 +98,56 @@ export function Cart() {
           </Box>
         }
       />
+      {productsList.length > 0 && (
+        <Box pb={3}>
+          <Box px={5}>
+            <Divider mb={5} mt={2} bgColor="muted.300" />
+          </Box>
 
-      <Box pb={3}>
-        <Box px={5}>
-          <Divider mb={5} mt={2} bgColor="muted.300" />
-        </Box>
+          <Box flexDir="row" justifyContent="space-between">
+            <Text fontSize="sm" color="muted.500">
+              Subtotal:
+            </Text>
+            <Text fontSize="sm" color="muted.500">
+              {formatCurrency(subTotal)}
+            </Text>
+          </Box>
 
-        <Box flexDir="row" justifyContent="space-between">
-          <Text fontSize="sm" color="muted.500">
-            Subtotal:
-          </Text>
-          <Text fontSize="sm" color="muted.500">
-            {formatCurrency(subTotal)}
-          </Text>
-        </Box>
+          <Box flexDir="row" justifyContent="space-between">
+            <Text fontSize="sm" color="muted.500">
+              Delivery:
+            </Text>
+            <Text fontSize="sm" color="muted.500">
+              {formatCurrency(deliveryFee)}
+            </Text>
+          </Box>
 
-        <Box flexDir="row" justifyContent="space-between">
-          <Text fontSize="sm" color="muted.500">
-            Delivery:
-          </Text>
-          <Text fontSize="sm" color="muted.500">
-            {formatCurrency(deliveryFee)}
-          </Text>
+          <Box flexDir="row" justifyContent="space-between">
+            <Text fontWeight="semibold" fontSize="md">
+              Total:
+            </Text>
+            <Text fontWeight="semibold" fontSize="md">
+              {formatCurrency(subTotal + deliveryFee)}
+            </Text>
+          </Box>
+          <TouchableOpacity
+            style={{
+              backgroundColor: color.colors.green[500],
+              marginTop: 15,
+              borderRadius: 100,
+              marginHorizontal: 15,
+              padding: 15,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            onPress={handleCheckout}
+          >
+            <Text fontWeight="semibold" color="white" fontSize="lg">
+              Go to payment
+            </Text>
+          </TouchableOpacity>
         </Box>
-
-        <Box flexDir="row" justifyContent="space-between">
-          <Text fontWeight="semibold" fontSize="md">
-            Total:
-          </Text>
-          <Text fontWeight="semibold" fontSize="md">
-            {formatCurrency(subTotal + deliveryFee)}
-          </Text>
-        </Box>
-        <TouchableOpacity
-          style={{
-            backgroundColor: color.colors.green[500],
-            marginTop: 15,
-            borderRadius: 100,
-            marginHorizontal: 15,
-            padding: 15,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-          onPress={() => navigate('Checkout')}
-        >
-          <Text fontWeight="semibold" color="white" fontSize="lg">
-            Go to payment
-          </Text>
-        </TouchableOpacity>
-      </Box>
+      )}
     </Box>
   );
 }

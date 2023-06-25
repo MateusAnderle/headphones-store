@@ -5,7 +5,6 @@ export declare global {
       ProductDetail: {
         id: string;
       };
-      Login: undefined;
       UserAccount: undefined;
       Cart: undefined;
       Checkout: undefined;
