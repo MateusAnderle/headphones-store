@@ -1,19 +1,17 @@
-import { Box, Text, Image, Center, Spinner } from 'native-base';
 import { FlatList, TouchableOpacity } from 'react-native';
-import { House } from 'phosphor-react-native';
-import { useNavigation } from '@react-navigation/native';
-import LogoImage from '../../assets/logo.png';
-import { PurchasesCard } from '../../components/PurchasesCard';
-import { useSelector } from 'react-redux';
-import { AccountStateProps } from '../../store/accountSlice';
 
-type UserAccountProps = {
-  account: AccountStateProps;
-};
+import { Box, Text, Image, Center } from 'native-base';
+import { PurchasesCard } from '../../components/PurchasesCard';
+import { House } from 'phosphor-react-native';
+
+import { useNavigation } from '@react-navigation/native';
+
+import LogoImage from '../../assets/logo.png';
+import { useAppSelector } from '../../store';
 
 export function UserAccount() {
   const { navigate } = useNavigation();
-  const { purchased } = useSelector((state: UserAccountProps) => state.account);
+  const { purchased } = useAppSelector((state) => state.account);
 
   const EmptyList = () => (
     <Center flex={1}>

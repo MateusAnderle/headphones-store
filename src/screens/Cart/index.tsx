@@ -1,34 +1,24 @@
-import { Box, Divider, Text, useTheme, useToast } from 'native-base';
+import { useEffect } from 'react';
 import { TouchableOpacity, FlatList } from 'react-native';
+
+import { Box, Divider, Text, useTheme, useToast } from 'native-base';
 import { CaretLeft } from 'phosphor-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { CartItem } from '../../components/CartItem';
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
-import {
-  ProductProps,
-  clearAddItemError,
-  clearCart,
-} from '../../store/cartSlice';
+
+import { useDispatch } from 'react-redux';
+import { clearAddItemError, clearCart } from '../../store/cartSlice';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { addPurchase } from '../../store/accountSlice';
-
-type CartDetailProps = {
-  cart: {
-    deliveryFee: number;
-    error: string | undefined;
-    productsList: ProductProps[];
-    success: boolean;
-  };
-};
+import { useAppSelector } from '../../store';
 
 export function Cart() {
   const toast = useToast();
   const color = useTheme();
   const dispatch = useDispatch();
   const { goBack, navigate } = useNavigation();
-  const { error, productsList, deliveryFee } = useSelector(
-    (state: CartDetailProps) => state.cart
+  const { error, productsList, deliveryFee } = useAppSelector(
+    (state) => state.cart
   );
 
   const subTotal = productsList.reduce((acc, obj) => {

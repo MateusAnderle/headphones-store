@@ -1,19 +1,16 @@
-import { Box, Center, Text, useTheme, useToast } from 'native-base';
-import { TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { AccountStateProps } from '../../store/accountSlice';
+import { TouchableOpacity } from 'react-native';
 
-type CheckoutProps = {
-  account: AccountStateProps;
-};
+import { Box, Center, Text, useTheme, useToast } from 'native-base';
+import { useNavigation } from '@react-navigation/native';
+
+import { useAppSelector } from '../../store';
 
 export function Checkout() {
   const color = useTheme();
   const toast = useToast();
   const { navigate } = useNavigation();
-  const { success } = useSelector((state: CheckoutProps) => state.account);
+  const { success } = useAppSelector((state) => state.account);
 
   useEffect(() => {
     if (success) {

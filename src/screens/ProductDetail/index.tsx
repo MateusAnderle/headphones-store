@@ -7,30 +7,22 @@ import {
 import { Box, Text, Center, Spinner, ScrollView, useToast } from 'native-base';
 import { CaretLeft } from 'phosphor-react-native';
 
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 import { PRODUCT_DETAIL } from '../../config/apollo/queries/productDetail';
 import { useQuery } from '@apollo/client';
 import { useEffect } from 'react';
 import { baseUrl } from '../../utils/baseUrl';
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { useAppSelector } from '../../store';
+
 import {
   addCartItem,
   clearAddItemSuccess,
   clearAddItemError,
-  ProductProps,
 } from '../../store/cartSlice';
 import { formatCurrency } from '../../utils/formatCurrency';
-
-type ProductDetailProps = {
-  cart: {
-    deliveryFee: number;
-    error: string | undefined;
-    productsList: ProductProps[];
-    success: boolean;
-  };
-};
 
 type ImagesProps = {
   attributes: {
@@ -45,8 +37,8 @@ export function ProductDetail() {
   const dispatch = useDispatch();
   const { width } = useWindowDimensions();
 
-  const { error: cartError, success: cartSuccess } = useSelector(
-    (state: ProductDetailProps) => state.cart
+  const { error: cartError, success: cartSuccess } = useAppSelector(
+    (state) => state.cart
   );
 
   const { data, loading, error } = useQuery(PRODUCT_DETAIL, {
